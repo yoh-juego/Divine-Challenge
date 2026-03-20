@@ -1,0 +1,93 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: black;
+  color: white;
+}
+
+/* TOP BAR */
+.top-bar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+  background: rgba(0,0,0,0.7);
+}
+
+/* GAME */
+#gameScreen {
+  min-height: 100vh;
+  padding-top: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* BOARD */
+.board {
+  display: grid;
+  grid-template-columns: repeat(4, min(20vw, 120px));
+  gap: min(2vw, 15px);
+}
+
+/* CARDS */
+.card {
+  width: min(20vw, 120px);
+  height: min(20vw, 120px);
+  background: #87CEFA;
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* COUNTDOWN */
+.countdown {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.countdown h1 {
+  font-size: 100px;
+  color: gold;
+}
+
+/* POPUP */
+.popup {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup h1 {
+  color: gold;
+}
+
+.hidden {
+  display: none;
+}

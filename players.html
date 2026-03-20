@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Choose Your Gods</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      color: white;
+      text-align: center;
+
+      background: linear-gradient(135deg, #1e3c72, #2a5298, #3ca55c, #b5ac49);
+      background-size: 400% 400%;
+      animation: bgMove 10s ease infinite;
+
+      min-height: 100vh;
+      overflow-y: auto;
+    }
+
+    @keyframes bgMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+      margin-top: 10px;
+      font-size: 32px;
+    }
+
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .player {
+      width: 50%;
+      padding: 20px;
+      border-right: 1px solid rgba(255,255,255,0.3);
+      position: relative;
+
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    input {
+      padding: 10px;
+      font-size: 18px;
+      margin-top: 20px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background: gold;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .gods {
+      margin-top: 20px;
+      display: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .god-box {
+      padding: 10px;
+      background: linear-gradient(45deg, violet, purple);
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px violet;
+      transition: 0.3s;
+    }
+
+    .god-box:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px violet;
+    }
+
+    .result {
+      font-size: 24px;
+      color: gold;
+      margin-top: 50px;
+    }
+
+    /* 🎆 FIRECRACKER PARTICLES */
+    .particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      animation: explode 1s ease-out forwards;
+    }
+
+    @keyframes explode {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--x), var(--y)) scale(0.5);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>⚡ Enter Players ⚡</h1>
+
+<div class="container">
+
+  <div class="player" id="player1">
+    <h2>Player 1</h2>
+    <input type="text" id="p1name" placeholder="Enter name">
+    <br>
+    <button onclick="showGods(1)">Enter</button>
+    <div class="gods" id="gods1"></div>
+  </div>
+
+  <div class="player" id="player2">
+    <h2>Player 2</h2>
+    <input type="text" id="p2name" placeholder="Enter name">
+    <br>
+    <button onclick="showGods(2)">Enter</button>
+    <div class="gods" id="gods2"></div>
+  </div>
+
+</div>
+
+<script>
+
+const gods = [
+  "Zeus", "Hera", "Poseidon", "Athena", "Apollo",
+  "Artemis", "Ares", "Aphrodite", "Hephaestus",
+  "Hermes", "Hestia"
+];
+
+let chosenPlayers = 0;
+
+function showGods(player) {
+  let name = document.getElementById("p" + player + "name").value;
+
+  if (name.trim() === "") {
+    alert("Please enter name first!");
+    return;
+  }
+
+  let container = document.getElementById("gods" + player);
+  container.style.display = "flex";
+
+  container.innerHTML = "<h3 style='width:100%'>✨ Choose your character ✨</h3>";
+
+  gods.forEach(god => {
+    let box = document.createElement("div");
+    box.classList.add("god-box");
+    box.innerText = god;
+
+    box.onclick = () => chooseGod(player, god);
+
+    container.appendChild(box);
+  });
+}
+
+function chooseGod(player, god) {
+  let playerDiv = document.getElementById("player" + player);
+  let name = document.getElementById("p" + player + "name").value;
+
+  localStorage.setItem("player" + player + "Name", name);
+  localStorage.setItem("player" + player + "God", god);
+
+  playerDiv.innerHTML = "";
+
+  let result = document.createElement("div");
+  result.classList.add("result");
+  result.innerText = `🎉 Hurrah ${name}! You are ${god} ⚡`;
+
+  playerDiv.appendChild(result);
+
+  createFirecracker(playerDiv);
+
+  chosenPlayers++;
+
+  if (chosenPlayers === 2) {
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 2000);
+  }
+}
+
+// 🎆 FIRECRACKER EFFECT
+function createFirecracker(container) {
+  const colors = ["red", "yellow", "orange", "white", "gold"];
+
+  for (let i = 0; i < 40; i++) {
+    let p = document.createElement("div");
+    p.classList.add("particle");
+
+    let x = (Math.random() - 0.5) * 300 + "px";
+    let y = (Math.random() - 0.5) * 300 + "px";
+
+    p.style.setProperty("--x", x);
+    p.style.setProperty("--y", y);
+
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+    p.style.left = "50%";
+    p.style.top = "50%";
+
+    container.appendChild(p);
+
+    setTimeout(() => p.remove(), 1000);
+  }
+}
+
+</script>
+
+</body>
+</html>

@@ -1,94 +1,77 @@
-/* BODY */
 body {
   margin: 0;
   font-family: Arial;
-  background: black;
+  background: radial-gradient(circle, #0f2027, #203a43, #2c5364);
   color: white;
 }
 
 /* TOP BAR */
 .top-bar {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 60px;
-
   display: flex;
   justify-content: space-between;
-  align-items: center;
-
-  padding: 0 20px;
-  box-sizing: border-box;
-
-  background: rgba(0,0,0,0.7);
-  z-index: 10;
+  padding: 15px 25px;
+  font-size: 20px;
 }
 
-/* GAME SCREEN */
-#gameScreen {
-  min-height: 100vh;
-  padding-top: 70px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
+#hearts {
+  color: red;
+  font-size: 22px;
 }
 
 /* BOARD */
 .board {
   display: grid;
   grid-template-columns: repeat(4, min(20vw, 120px));
-  gap: min(2vw, 15px);
+  gap: 15px;
+  justify-content: center;
+  margin-top: 30px;
 }
 
-/* CARDS */
+/* CARD */
 .card {
   width: min(20vw, 120px);
   height: min(20vw, 120px);
-
-  background: #87CEFA;
-  border-radius: 15px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
+  perspective: 1000px;
   cursor: pointer;
-  overflow: hidden;
-
-  transition: transform 0.2s;
 }
 
-.card:hover {
-  transform: scale(1.05);
+.inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
 }
 
-/* IMAGE */
-.card img {
+.flipped .inner {
+  transform: rotateY(180deg);
+}
+
+.front, .back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  backface-visibility: hidden;
+}
+
+.front {
+  background: lightblue;
+}
+
+.back {
+  transform: rotateY(180deg);
+  background: white;
+}
+
+.back img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
-/* COUNTDOWN */
-.countdown {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: black;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  z-index: 20;
-}
-
-.countdown h1 {
-  font-size: 100px;
-  color: gold;
+.matched {
+  box-shadow: 0 0 20px gold;
 }
 
 /* POPUP */
@@ -97,32 +80,29 @@ body {
   top: 0;
   width: 100%;
   height: 100%;
-
-  background: rgba(0,0,0,0.85);
-
+  background: rgba(0,0,0,0.9);
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-
-  z-index: 30;
 }
 
-.popup h1 {
-  font-size: 40px;
-  color: gold;
+/* 🟡 MUSTARD SCOREBOARD */
+.score-box {
+  background: #d4a017;
+  color: black;
+  padding: 40px;
+  border-radius: 20px;
+  font-size: 24px;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(0,0,0,0.5);
 }
 
-.popup button {
-  padding: 10px 25px;
-  margin-top: 20px;
+button {
+  padding: 12px 30px;
   font-size: 18px;
   background: gold;
   border: none;
   border-radius: 10px;
   cursor: pointer;
-}
-
-.hidden {
-  display: none;
 }

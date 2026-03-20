@@ -3,208 +3,214 @@ let p2 = localStorage.getItem("player2God") || "Player 2";
 
 const board = document.getElementById("board");
 const timerText = document.getElementById("timer");
-const chanceText = document.getElementById("chance");
 const turnText = document.getElementById("turn");
-
 const popup = document.getElementById("popup");
 const winnerText = document.getElementById("winnerText");
+const heartsText = document.getElementById("hearts");
 
-const countdownScreen = document.getElementById("countdownScreen");
-const countText = document.getElementById("countText");
-
-/* IMAGE PATHS (GITHUB READY) */
-const pairs = [
-  ["phrixus.jpg","ram.jpg"],
-  ["fleece.jpg","dragon.jpg"],
-  ["jason.jpg","pelias.jpg"],
-  ["athena.jpg","ship.jpg"],
-  ["phineus.png","harpies2.jpg.jpeg"],
-  ["clash_rock.png","argonauts.png"],
-  ["colchis.jpg.jpeg","aeetes.jpg.jpeg"],
-  ["medea.jpg.jpeg","love.png"]
+const allPairs = [
+  ["images/phrixus.jpg","images/ram.jpg"],
+  ["images/fleece.jpg","images/dragon.jpg"],
+  ["images/jason.jpg","images/pelias.jpg"],
+  ["images/athena.jpg","images/ship.jpg"],
+  ["images/phineus.png","images/harpies2.jpg.jpeg"],
+  ["images/clash_rock.png","images/argonauts.png"],
+  ["images/colchis.jpg.jpeg","images/aeetes.jpg.jpeg"],
+  ["images/medea.jpg.jpeg","images/love.png"]
 ];
 
-let cardsData = pairs.flat();
+let players = {
+  1: {name:p1, level:1, opened:[], score:0, prevLevel:1},
+  2: {name:p2, level:1, opened:[], score:0, prevLevel:1}
+};
 
-let round = 1;
 let currentPlayer = 1;
+let chance = 1;
+let maxChance = 4;
 
-let results = {
-  1: { completed: false, time: null },
-  2: { completed: false, time: null }
-};
+let cards = [];
+let first=null, second=null, lock=false;
+let matched=0;
 
-let first = null;
-let second = null;
-let lock = false;
-let matched = 0;
+let timeLeft=30, timer;
 
-let timeLeft = 30;
-let timer;
-
-/* START GAME */
-window.onload = () => {
+/* START */
+function startGame(){
+  popup.style.display="none";
   startTurn(1);
-};
-
-/* COUNTDOWN */
-function startCountdown(callback) {
-  countdownScreen.classList.remove("hidden");
-
-  let count = 3;
-  countText.innerText = count;
-
-  let interval = setInterval(() => {
-    count--;
-    countText.innerText = count;
-
-    if (count === 0) {
-      clearInterval(interval);
-      setTimeout(() => {
-        countdownScreen.classList.add("hidden");
-        callback();
-      }, 500);
-    }
-  }, 1000);
 }
 
-/* START TURN */
-function startTurn(player) {
+/* HEARTS */
+function updateHearts(){
+  heartsText.innerText = "❤️".repeat(maxChance - chance + 1);
+}
+
+/* TURN */
+function startTurn(player){
   currentPlayer = player;
+  updateHearts();
 
-  turnText.innerText = (player === 1 ? p1 : p2) + "'s Turn";
-  chanceText.innerText = "Chance: " + round;
+  turnText.innerText = players[player].name + "'s Turn";
 
-  startCountdown(() => {
-    matched = 0;
-    timeLeft = 30;
-
+  setTimeout(()=>{
+    loadCards();
     createBoard();
-
-    timerText.innerText = "Time: " + timeLeft;
-
-    clearInterval(timer);
-    timer = setInterval(() => {
-      timeLeft--;
-      timerText.innerText = "Time: " + timeLeft;
-
-      if (timeLeft <= 0) {
-        finishTurn(false);
-      }
-    }, 1000);
-  });
+    startTimer();
+  },1000);
 }
 
-/* CREATE BOARD */
-function createBoard() {
-  board.innerHTML = "";
+/* LOAD */
+function loadCards(){
+  if(players[currentPlayer].level===1)
+    cards = allPairs.slice(0,4).flat();
+  else
+    cards = allPairs.flat();
 
-  let shuffled = [...cardsData].sort(() => 0.5 - Math.random());
+  if(players[currentPlayer].prevLevel !== players[currentPlayer].level){
+    players[currentPlayer].opened = [];
+    players[currentPlayer].prevLevel = players[currentPlayer].level;
+  }
+}
 
-  shuffled.forEach(img => {
-    let card = document.createElement("div");
-    card.className = "card";
-    card.dataset.image = img;
+/* BOARD */
+function createBoard(){
+  board.innerHTML="";
+  let shuffled=[...cards].sort(()=>0.5-Math.random());
 
-    card.onclick = () => flip(card);
+  shuffled.forEach(img=>{
+    let card=document.createElement("div");
+    card.className="card";
+
+    let inner=document.createElement("div");
+    inner.className="inner";
+
+    let front=document.createElement("div");
+    front.className="front";
+
+    let back=document.createElement("div");
+    back.className="back";
+    back.innerHTML=`<img src="${img}">`;
+
+    inner.append(front,back);
+    card.appendChild(inner);
+
+    if(players[currentPlayer].opened.includes(img)){
+      card.classList.add("flipped","matched");
+    } else {
+      card.onclick=()=>flip(card,img);
+    }
 
     board.appendChild(card);
   });
+
+  matched = players[currentPlayer].opened.length/2;
+}
+
+/* TIMER */
+function startTimer(){
+  timeLeft=30;
+  timerText.innerText="Time: "+timeLeft;
+
+  clearInterval(timer);
+  timer=setInterval(()=>{
+    timeLeft--;
+    timerText.innerText="Time: "+timeLeft;
+
+    if(timeLeft<=0){
+      clearInterval(timer);
+      endTurn();
+    }
+  },1000);
 }
 
 /* FLIP */
-function flip(card) {
-  if (lock || card.innerHTML !== "") return;
+function flip(card,img){
+  if(lock || card.classList.contains("flipped")) return;
 
-  card.innerHTML = `<img src="${card.dataset.image}">`;
+  card.classList.add("flipped");
 
-  if (!first) {
-    first = card;
-  } else {
-    second = card;
+  if(!first) first={card,img};
+  else {
+    second={card,img};
     checkMatch();
   }
 }
 
-/* CHECK MATCH */
-function checkMatch() {
-  let match = pairs.some(pair =>
-    pair.includes(first.dataset.image) &&
-    pair.includes(second.dataset.image)
-  );
+/* MATCH */
+function checkMatch(){
+  let match = allPairs.some(p=>p.includes(first.img)&&p.includes(second.img));
 
-  if (match) {
+  if(match){
+    players[currentPlayer].opened.push(first.img,second.img);
+
+    players[currentPlayer].score += (players[currentPlayer].level===1)?50:100;
+
+    first.card.classList.add("matched");
+    second.card.classList.add("matched");
+
     matched++;
     reset();
 
-    if (matched === pairs.length) {
-      finishTurn(true);
+    /* 🔥 STOP TIMER + MOVE IMMEDIATELY */
+    if(matched === cards.length/2){
+      clearInterval(timer);
+      players[currentPlayer].level = 2;
+
+      setTimeout(()=>{
+        endTurn();
+      },500);
     }
+
   } else {
-    lock = true;
-    setTimeout(() => {
-      first.innerHTML = "";
-      second.innerHTML = "";
+    lock=true;
+    setTimeout(()=>{
+      first.card.classList.remove("flipped");
+      second.card.classList.remove("flipped");
       reset();
-    }, 600);
+    },600);
   }
 }
 
-/* RESET */
-function reset() {
-  first = null;
-  second = null;
-  lock = false;
+function reset(){
+  first=null;
+  second=null;
+  lock=false;
 }
 
-/* FINISH TURN */
-function finishTurn(completed) {
-  clearInterval(timer);
-
-  results[currentPlayer].completed = completed;
-  results[currentPlayer].time = completed ? (30 - timeLeft) : null;
-
-  if (currentPlayer === 1) {
-    setTimeout(() => startTurn(2), 1000);
+/* END TURN */
+function endTurn(){
+  if(currentPlayer===1){
+    startTurn(2);
   } else {
-    evaluateRound();
+    showScore();
   }
 }
 
-/* ROUND LOGIC */
-function evaluateRound() {
-  let p1r = results[1];
-  let p2r = results[2];
+/* SCOREBOARD */
+function showScore(){
+  popup.style.display="flex";
 
-  if (p1r.completed && !p2r.completed) return declareWinner(p1);
-  if (!p1r.completed && p2r.completed) return declareWinner(p2);
+  winnerText.innerHTML = `
+    <div class="score-box">
+      <h2>Scoreboard</h2>
+      ${players[1].name}: ${players[1].score} pts<br><br>
+      ${players[2].name}: ${players[2].score} pts
+    </div>
+  `;
 
-  if (p1r.completed && p2r.completed) {
-    if (p1r.time < p2r.time) return declareWinner(p1);
-    if (p2r.time < p1r.time) return declareWinner(p2);
-  }
+  chance++;
 
-  if (round < 3) {
-    round++;
-    results = {
-      1: { completed: false, time: null },
-      2: { completed: false, time: null }
-    };
-    setTimeout(() => startTurn(1), 1500);
-  } else {
-    winnerText.innerText = "🤝 It's a Draw!";
-    popup.classList.remove("hidden");
+  if(chance > maxChance){
+    declareWinner();
   }
 }
 
 /* WINNER */
-function declareWinner(name) {
-  board.innerHTML = "";
-  winnerText.innerText = `🏆 ${name} WINS!`;
-  popup.classList.remove("hidden");
-}
+function declareWinner(){
+  let winner="Tie";
 
-/* RESTART */
-function restartGame() {
-  location.reload();
+  if(players[1].score > players[2].score) winner = players[1].name;
+  else if(players[2].score > players[1].score) winner = players[2].name;
+
+  winnerText.innerHTML = `<h1>${winner} Wins 🏆</h1>`;
 }

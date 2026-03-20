@@ -1,31 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Game</title>
+  <title>Divine Challenge</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="top-bar">
-  <div id="chance">Chance: 1</div>
+  <div id="hearts"></div>
   <div id="turn"></div>
-  <div id="timer">Time: 30</div>
+  <div id="timer"></div>
 </div>
 
-<div id="countdownScreen" class="countdown hidden">
-  <h1 id="countText"></h1>
+<div id="board" class="board"></div>
+
+<div id="popup" class="popup">
+  <div id="winnerText"></div>
+  <button onclick="startGame()">START</button>
 </div>
 
-<div id="gameScreen">
-  <div class="board" id="board"></div>
-</div>
-
-<div id="popup" class="popup hidden">
-  <h1 id="winnerText"></h1>
-  <button onclick="location.reload()">Play Again</button>
-</div>
-
+<!-- 🔥 IMPORTANT: script at END -->
 <script src="script.js"></script>
 
 </body>

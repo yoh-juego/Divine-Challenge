@@ -1,56 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Choose Characters</title>
+  <title>Choose Players</title>
 
   <style>
     body {
       margin: 0;
       font-family: Arial;
+      display: flex;
       height: 100vh;
+      background: linear-gradient(to right, #141e30, #243b55);
+      color: white;
+    }
 
+    .side {
+      width: 40%;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .center {
+      width: 20%;
       display: flex;
       flex-direction: column;
+      justify-content: center;
       align-items: center;
-
-      background: linear-gradient(to right, #a1ffce, #faffd1);
-    }
-
-    h1 {
-      margin-top: 20px;
-    }
-
-    .container {
-      display: flex;
-      justify-content: space-around;
-      width: 100%;
-      margin-top: 20px;
-    }
-
-    .player {
-      width: 40%;
-      background: white;
-      padding: 20px;
-      border-radius: 15px;
-      text-align: center;
+      border-left: 2px solid white;
+      border-right: 2px solid white;
     }
 
     input {
       padding: 10px;
-      width: 80%;
-      margin-bottom: 15px;
-    }
-
-    .gods {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      margin: 10px;
+      width: 70%;
+      font-size: 16px;
     }
 
     .god {
-      padding: 10px;
-      background: violet;
-      color: white;
+      padding: 10px 20px;
+      margin: 5px;
+      background: purple;
       border-radius: 10px;
       cursor: pointer;
     }
@@ -61,84 +50,78 @@
     }
 
     button {
+      padding: 10px 20px;
       margin-top: 20px;
-      padding: 10px 30px;
       font-size: 18px;
+      background: gold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
     }
   </style>
 </head>
 
 <body>
 
-<h1>Choose Your Character</h1>
+<div class="side">
+  <h2>Player 1</h2>
+  <p>Give your name</p>
+  <input id="p1name">
 
-<div class="container">
-
-  <!-- PLAYER 1 -->
-  <div class="player">
-    <h2>Player 1</h2>
-    <input id="p1name" placeholder="Enter name">
-
-    <div class="gods" id="p1gods"></div>
-  </div>
-
-  <!-- PLAYER 2 -->
-  <div class="player">
-    <h2>Player 2</h2>
-    <input id="p2name" placeholder="Enter name">
-
-    <div class="gods" id="p2gods"></div>
-  </div>
-
+  <p>Choose your character</p>
+  <div id="p1choice"></div>
 </div>
 
-<button onclick="startGame()">Start Game</button>
+<div class="center">
+  <h3>Choose Gods</h3>
+  <div id="godList"></div>
+  <button onclick="startGame()">Start Game</button>
+</div>
+
+<div class="side">
+  <h2>Player 2</h2>
+  <p>Give your name</p>
+  <input id="p2name">
+
+  <p>Choose your character</p>
+  <div id="p2choice"></div>
+</div>
 
 <script>
-const gods = [
-  "Zeus","Hera","Poseidon","Athena",
-  "Apollo","Artemis","Ares","Aphrodite",
-  "Hephaestus","Hermes","Hestia","Dionysus"
-];
+let gods = ["Zeus","Hera","Poseidon","Athena","Apollo","Artemis","Ares","Aphrodite","Hephaestus","Hermes"];
 
-let p1choice = "";
-let p2choice = "";
+let p1God=null, p2God=null;
 
-// CREATE GOD BOXES
-function createGods(containerId, player) {
-  let container = document.getElementById(containerId);
+let godList = document.getElementById("godList");
 
-  gods.forEach(god => {
-    let div = document.createElement("div");
-    div.innerText = god;
-    div.className = "god";
+gods.forEach(g=>{
+  let div = document.createElement("div");
+  div.className="god";
+  div.innerText=g;
 
-    div.onclick = () => {
-      let all = container.querySelectorAll(".god");
-      all.forEach(g => g.classList.remove("selected"));
-
+  div.onclick=()=>{
+    if(!p1God){
+      p1God=g;
+      document.getElementById("p1choice").innerText=g;
       div.classList.add("selected");
+    }
+    else if(!p2God){
+      p2God=g;
+      document.getElementById("p2choice").innerText=g;
+      div.classList.add("selected");
+    }
+  };
 
-      if(player === 1) p1choice = god;
-      else p2choice = god;
-    };
+  godList.appendChild(div);
+});
 
-    container.appendChild(div);
-  });
-}
-
-createGods("p1gods",1);
-createGods("p2gods",2);
-
-// START GAME
-function startGame() {
+function startGame(){
   let name1 = document.getElementById("p1name").value || "Player 1";
   let name2 = document.getElementById("p2name").value || "Player 2";
 
-  localStorage.setItem("player1God", name1);
-  localStorage.setItem("player2God", name2);
+  localStorage.setItem("player1God", name1 + " (" + p1God + ")");
+  localStorage.setItem("player2God", name2 + " (" + p2God + ")");
 
-  /* 🔥 IMPORTANT CHANGE HERE */
   window.location.href = "game.html";
 }
 </script>

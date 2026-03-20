@@ -3,70 +3,47 @@
 <head>
   <title>Divine Challenge</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      color: white;
-      text-align: center;
-      height: 100vh;
-      overflow: hidden;
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  height: 100vh;
 
-      /* 🖼️ YOUR BACKGROUND IMAGE */
-      background: url("file:///C:/Users/DELL/Desktop/memory%20game/background.jpg.jpeg") no-repeat center center/cover;
-    }
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-    /* DARK OVERLAY */
-    .overlay {
-      background: rgba(0, 0, 0, 0.5);
-      height: 100vh;
+  color: white;
 
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
+  background-image: url("./images/background.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
-    h1 {
-      font-size: 40px;
-      margin-bottom: 20px;
-    }
+.overlay {
+  background: rgba(0,0,0,0.6);
+  padding: 40px;
+  border-radius: 15px;
+  text-align: center;
+}
 
-    h2 {
-      font-size: 22px;
-      margin-bottom: 30px;
-    }
-
-    /* 🔥 BUTTON STYLE */
-    .play-btn {
-      padding: 15px 40px;
-      font-size: 20px;
-      background: gold;
-      color: black;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-
-      transition: 0.3s;
-      box-shadow: 0 0 15px gold;
-    }
-
-    .play-btn:hover {
-      background: orange;
-      transform: scale(1.1);
-      box-shadow: 0 0 25px orange;
-    }
-  </style>
+button {
+  padding: 15px 40px;
+  font-size: 20px;
+  background: gold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+</style>
 </head>
 
 <body>
 
 <div class="overlay">
-  <h1>⚡ DIVINE CHALLENGE ⚡</h1>
-  <h2>Journey for the Golden Fleece</h2>
-
-  <!-- ✨ UPDATED BUTTON TEXT -->
-  <button class="play-btn" onclick="startGame()">BEGIN YOUR ODYSSEY</button>
+  <h1>⚡ Divine Challenge ⚡</h1>
+  <button onclick="startGame()">BEGIN YOUR ODYSSEY</button>
 </div>
 
 <script>

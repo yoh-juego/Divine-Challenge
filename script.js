@@ -6,23 +6,22 @@ const timerText = document.getElementById("timer");
 const chanceText = document.getElementById("chance");
 const turnText = document.getElementById("turn");
 
+const popup = document.getElementById("popup");
+const winnerText = document.getElementById("winnerText");
+
 const countdownScreen = document.getElementById("countdownScreen");
 const countText = document.getElementById("countText");
 
-const popup = document.getElementById("popup");
-const winnerText = document.getElementById("winnerText");
-const winSound = document.getElementById("winSound");
-
-// ✅ DIRECT LOCAL PATHS (FIXED)
+/* IMAGE PATHS (GITHUB READY) */
 const pairs = [
-  ["file:///C:/Users/DELL/Desktop/memory%20game/Phrixus.jpg","file:///C:/Users/DELL/Desktop/memory%20game/ram.jpg"],
-  ["file:///C:/Users/DELL/Desktop/memory%20game/fleece.jpg","file:///C:/Users/DELL/Desktop/memory%20game/dragon.jpg"],
-  ["file:///C:/Users/DELL/Desktop/memory%20game/jason.jpg","file:///C:/Users/DELL/Desktop/memory%20game/pelias.jpg"],
-  ["file:///C:/Users/DELL/Desktop/memory%20game/athena.jpg","file:///C:/Users/DELL/Desktop/memory%20game/ship.jpg"],
-  ["file:///C:/Users/DELL/Desktop/memory%20game/phineus.png","file:///C:/Users/DELL/Desktop/memory%20game/harpies2.jpg.jpeg"],
-  ["file:///C:/Users/DELL/Desktop/memory%20game/clash_rock.png","file:///C:/Users/DELL/Desktop/memory%20game/argonauts.png"],
-  ["file:///C:/Users/DELL/Desktop/memory%20game/colchis.jpg.jpeg","file:///C:/Users/DELL/Desktop/memory%20game/aeetes.jpg.jpeg"],
-  ["file:///C:/Users/DELL/Desktop/memory%20game/medea.jpg.jpeg","file:///C:/Users/DELL/Desktop/memory%20game/love.png"]
+  ["images/phrixus.jpg","images/ram.jpg"],
+  ["images/fleece.jpg","images/dragon.jpg"],
+  ["images/jason.jpg","images/pelias.jpg"],
+  ["images/athena.jpg","images/ship.jpg"],
+  ["images/phineus.png","images/harpies2.jpg.jpeg"],
+  ["images/clash_rock.png","images/argonauts.png"],
+  ["images/colchis.jpg.jpeg","images/aeetes.jpg.jpeg"],
+  ["images/medea.jpg.jpeg","images/love.png"]
 ];
 
 let cardsData = pairs.flat();
@@ -35,17 +34,20 @@ let results = {
   2: { completed: false, time: null }
 };
 
-let first = null, second = null, lock = false;
+let first = null;
+let second = null;
+let lock = false;
 let matched = 0;
+
 let timeLeft = 30;
 let timer;
 
-// START AFTER LOAD
-window.onload = function () {
+/* START GAME */
+window.onload = () => {
   startTurn(1);
 };
 
-// COUNTDOWN
+/* COUNTDOWN */
 function startCountdown(callback) {
   countdownScreen.classList.remove("hidden");
 
@@ -66,7 +68,7 @@ function startCountdown(callback) {
   }, 1000);
 }
 
-// START TURN
+/* START TURN */
 function startTurn(player) {
   currentPlayer = player;
 
@@ -93,14 +95,15 @@ function startTurn(player) {
   });
 }
 
-// CREATE BOARD
+/* CREATE BOARD */
 function createBoard() {
   board.innerHTML = "";
+
   let shuffled = [...cardsData].sort(() => 0.5 - Math.random());
 
   shuffled.forEach(img => {
     let card = document.createElement("div");
-    card.classList.add("card");
+    card.className = "card";
     card.dataset.image = img;
 
     card.onclick = () => flip(card);
@@ -109,21 +112,22 @@ function createBoard() {
   });
 }
 
-// FLIP
+/* FLIP */
 function flip(card) {
-  if (lock) return;
+  if (lock || card.innerHTML !== "") return;
 
   card.innerHTML = `<img src="${card.dataset.image}">`;
 
-  if (!first) first = card;
-  else {
+  if (!first) {
+    first = card;
+  } else {
     second = card;
-    check();
+    checkMatch();
   }
 }
 
-// CHECK
-function check() {
+/* CHECK MATCH */
+function checkMatch() {
   let match = pairs.some(pair =>
     pair.includes(first.dataset.image) &&
     pair.includes(second.dataset.image)
@@ -136,7 +140,6 @@ function check() {
     if (matched === pairs.length) {
       finishTurn(true);
     }
-
   } else {
     lock = true;
     setTimeout(() => {
@@ -147,14 +150,14 @@ function check() {
   }
 }
 
-// RESET
+/* RESET */
 function reset() {
   first = null;
   second = null;
   lock = false;
 }
 
-// FINISH TURN
+/* FINISH TURN */
 function finishTurn(completed) {
   clearInterval(timer);
 
@@ -168,7 +171,7 @@ function finishTurn(completed) {
   }
 }
 
-// ROUND LOGIC
+/* ROUND LOGIC */
 function evaluateRound() {
   let p1r = results[1];
   let p2r = results[2];
@@ -194,15 +197,14 @@ function evaluateRound() {
   }
 }
 
-// WINNER
+/* WINNER */
 function declareWinner(name) {
   board.innerHTML = "";
   winnerText.innerText = `🏆 ${name} WINS!`;
   popup.classList.remove("hidden");
-  winSound.play();
 }
 
-// RESTART
+/* RESTART */
 function restartGame() {
   location.reload();
 }

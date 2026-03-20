@@ -135,10 +135,11 @@ function startGame() {
   let name1 = document.getElementById("p1name").value || "Player 1";
   let name2 = document.getElementById("p2name").value || "Player 2";
 
-  localStorage.setItem("player1God", p1choice || name1);
-  localStorage.setItem("player2God", p2choice || name2);
+  localStorage.setItem("player1God", name1);
+  localStorage.setItem("player2God", name2);
 
-  window.location.href = "index.html";
+  /* 🔥 IMPORTANT CHANGE HERE */
+  window.location.href = "game.html";
 }
 </script>
 

@@ -14,14 +14,14 @@ const countText = document.getElementById("countText");
 
 /* IMAGE PATHS (GITHUB READY) */
 const pairs = [
-  ["phrixus.jpg","ram.jpg"],
-  ["fleece.jpg","dragon.jpg"],
-  ["jason.jpg","pelias.jpg"],
-  ["athena.jpg","ship.jpg"],
-  ["phineus.png","harpies2.jpg.jpeg"],
-  ["clash_rock.png","argonauts.png"],
-  ["colchis.jpg.jpeg","aeetes.jpg.jpeg"],
-  ["medea.jpg.jpeg","love.png"]
+  ["images/phrixus.jpg","images/ram.jpg"],
+  ["images/fleece.jpg","images/dragon.jpg"],
+  ["images/jason.jpg","images/pelias.jpg"],
+  ["images/athena.jpg","images/ship.jpg"],
+  ["images/phineus.png","images/harpies2.jpg.jpeg"],
+  ["images/clash_rock.png","images/argonauts.png"],
+  ["images/colchis.jpg.jpeg","images/aeetes.jpg.jpeg"],
+  ["images/medea.jpg.jpeg","images/love.png"]
 ];
 
 let cardsData = pairs.flat();

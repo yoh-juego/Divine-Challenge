@@ -1,32 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Game</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Divine Challenge</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      height: 100vh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      color: white;
+
+      background-image: url("./images/background.jpeg");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .overlay {
+      background: rgba(0,0,0,0.6);
+      padding: 40px;
+      border-radius: 15px;
+      text-align: center;
+    }
+
+    button {
+      padding: 15px 40px;
+      font-size: 20px;
+      background: gold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="top-bar">
-  <div id="chance">Chance: 1</div>
-  <div id="turn"></div>
-  <div id="timer">Time: 30</div>
+<div class="overlay">
+  <h1>⚡ Divine Challenge ⚡</h1>
+  <button onclick="startGame()">BEGIN YOUR ODYSSEY</button>
 </div>
 
-<div id="countdownScreen" class="countdown hidden">
-  <h1 id="countText"></h1>
-</div>
-
-<div id="gameScreen">
-  <div class="board" id="board"></div>
-</div>
-
-<div id="popup" class="popup hidden">
-  <h1 id="winnerText"></h1>
-  <button onclick="location.reload()">Play Again</button>
-</div>
-
-<script src="script.js"></script>
+<script>
+function startGame() {
+  window.location.href = "players.html";
+}
+</script>
 
 </body>
 </html>

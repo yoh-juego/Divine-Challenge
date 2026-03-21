@@ -1,12 +1,17 @@
-// 🎭 PLAYER DATA
-let p1 = localStorage.getItem("player1God") || "Apollo";
-let p2 = localStorage.getItem("player2God") || "Zeus";
+// 🎭 GET PLAYER DATA CORRECTLY
+let p1Name = localStorage.getItem("p1") || "Player 1";
+let p2Name = localStorage.getItem("p2") || "Player 2";
 
-// 🔊 SOUND
-let bgMusic = new Audio("sounds/bg.mp3");
-bgMusic.loop = true;
+let p1God = localStorage.getItem("c1") || "Apollo";
+let p2God = localStorage.getItem("c2") || "Zeus";
 
-let winSound = new Audio("sounds/win.mp3");
+let p1 = `${p1Name} (${p1God})`;
+let p2 = `${p2Name} (${p2God})`;
+
+function getGodName(text){
+  let match = text.match(/\((.*?)\)/);
+  return match ? match[1] : text;
+}
 
 // 🎮 ELEMENTS
 const board = document.getElementById("board");
@@ -17,27 +22,25 @@ const popup = document.getElementById("popup");
 const winnerText = document.getElementById("winnerText");
 const heartsText = document.getElementById("hearts");
 
-// 🧠 PAIRS
+// 🧠 CARD PAIRS
 const allPairs = [
-  ["phrixus.jpg","ram.jpg"],
-  ["fleece.jpg","dragon.jpg"],
-  ["jason.jpg","pelias.jpg"],
-  ["athena.jpg","ship.jpg"],
-  ["phineus.png","harpies2.jpg.jpeg"],
-  ["clash_rock.png","argonauts.png"],
-  ["colchis.jpg.jpeg","aeetes.jpg.jpeg"],
-  ["medea.jpg.jpeg","love.png"]
+  ["images/phrixus.jpg","images/ram.jpg"],
+  ["images/fleece.jpg","images/dragon.jpg"],
+  ["images/jason.jpg","images/pelias.jpg"],
+  ["images/athena.jpg","images/ship.jpg"],
+  ["images/phineus.png","images/harpies2.jpg.jpeg"],
+  ["images/clash_rock.png","images/argonauts.png"],
+  ["images/colchis.jpg.jpeg","images/aeetes.jpg.jpeg"],
+  ["images/medea.jpg.jpeg","images/love.png"]
 ];
 
-// 🎮 STATE
+// 🎮 GAME STATE
 let players = {
-  1: {name:p1, level:1, opened:[], score:0, completed:false, time:0},
-  2: {name:p2, level:1, opened:[], score:0, completed:false, time:0}
+  1: {name:p1, level:1, opened:[], score:0, finished:false, completed:false},
+  2: {name:p2, level:1, opened:[], score:0, finished:false, completed:false}
 };
 
-let turnOrder = [1,2];
-let turnIndex = 0;
-
+let currentPlayer = 1;
 let chance = 1;
 let maxChance = 4;
 
@@ -47,41 +50,18 @@ let matched=0;
 
 let timeLeft=30, timer;
 
-// 🎭 GOD NAME
-function getGodName(text){
-  let match = text.match(/\((.*?)\)/);
-  return match ? match[1] : text;
-}
-
 // ❤️ HEARTS
 function updateHearts(){
-  let hearts="";
-  for(let i=0;i<maxChance-chance+1;i++){
-    hearts += "❤️ ";
-  }
-  heartsText.innerText = hearts;
+  heartsText.innerText = "❤️ ".repeat(maxChance - chance + 1);
 }
 
-// 🎉 FIREWORKS
-function fireworks(){
-  for(let i=0;i<30;i++){
-    let f=document.createElement("div");
-    f.className="firework";
-    f.style.left = Math.random()*100 + "vw";
-    f.style.top = Math.random()*100 + "vh";
-    document.body.appendChild(f);
-    setTimeout(()=>f.remove(),1000);
-  }
-}
-
-// ▶️ START TURN
+// ▶️ START BUTTON
 function confirmStart(){
   popup.style.display="none";
-  bgMusic.play();
-  startTurn(turnOrder[turnIndex]);
+  startTurn(currentPlayer);
 }
 
-// 🔁 TURN START
+// 🔁 START TURN
 function startTurn(player){
   updateHearts();
 
@@ -103,7 +83,7 @@ function loadCards(player){
   matched = players[player].opened.length/2;
 }
 
-// 🎴 BOARD
+// 🎴 CREATE BOARD
 function createBoard(player){
   board.innerHTML="";
   let shuffled=[...cards].sort(()=>0.5-Math.random());
@@ -147,8 +127,7 @@ function startTimer(player){
 
     if(timeLeft<=0){
       clearInterval(timer);
-      players[player].time += 30;
-      nextTurn();
+      switchPlayer();
     }
   },1000);
 }
@@ -182,12 +161,14 @@ function checkMatch(player){
 
     if(matched === cards.length/2){
       clearInterval(timer);
-      players[player].time += (30 - timeLeft);
 
-      // ⭐ DO NOT upgrade immediately
-      players[player].finishedLevel = true;
+      if(players[player].level === 1){
+        players[player].finished = true;
+      } else {
+        players[player].completed = true;
+      }
 
-      nextTurn();
+      switchPlayer();
     }
 
   } else {
@@ -206,33 +187,23 @@ function reset(){
   lock=false;
 }
 
-// ⭐ LEVEL UP POPUP (ONLY PLACE WHERE NEXT ROUND EXISTS)
-function showLevelUpgrade(player){
-  popup.style.display="flex";
-  winnerText.innerHTML = `
-    <div class="score-box">
-      ${getGodName(players[player].name)} reached Level 2 🚀
-      <br><br>
-      <button onclick="confirmStart()">NEXT ROUND</button>
-    </div>
-  `;
+// 🔁 SWITCH PLAYER
+function switchPlayer(){
+  currentPlayer = currentPlayer === 1 ? 2 : 1;
+
+  if(currentPlayer === 1){
+    showScore();
+  } else {
+    showReady();
+  }
 }
 
-// 🔁 NEXT TURN
-function nextTurn(){
-  turnIndex++;
-
-  if(turnIndex >= turnOrder.length){
-    turnIndex = 0;
-    showScore();
-    return;
-  }
-
+// 🟡 READY POPUP
+function showReady(){
   popup.style.display="flex";
-
   winnerText.innerHTML = `
     <div class="score-box">
-      ${getGodName(players[turnOrder[turnIndex]].name)}, Ready?
+      ${getGodName(players[currentPlayer].name)}, Ready?
       <br><br>
       <button onclick="confirmStart()">START</button>
     </div>
@@ -248,61 +219,56 @@ function showScore(){
       <h2>Scoreboard</h2>
       ${getGodName(players[1].name)}: ${players[1].score} pts<br><br>
       ${getGodName(players[2].name)}: ${players[2].score} pts
+      <br><br>
+      <button onclick="confirmStart()">START</button>
     </div>
   `;
 
-  // ⭐ LEVEL UPGRADE AFTER BOTH PLAYERS
-  let levelUp = false;
-
+  // ⭐ LEVEL UPGRADE AFTER BOTH PLAYED
   for(let i=1;i<=2;i++){
-    if(players[i].finishedLevel && players[i].level===1){
+    if(players[i].finished && players[i].level===1){
       players[i].level = 2;
       players[i].opened = [];
-      players[i].finishedLevel = false;
-      levelUp = true;
+      players[i].finished = false;
     }
   }
 
   chance++;
 
   if(chance > maxChance){
-    setTimeout(declareWinner, 1500);
-  } else {
-    setTimeout(()=>{
-      popup.style.display="none";  // ⭐ IMPORTANT
-      nextTurn();                  // ⭐ ONLY HERE we go next
-    },1500);
+    declareWinner();
   }
 }
 
-// 🏆 WINNER
+// 🏆 FINAL WINNER
 function declareWinner(){
 
   let p1Done = players[1].completed;
   let p2Done = players[2].completed;
 
-  if(p1Done || p2Done){
-
-    let winner;
-
-    if(p1Done && !p2Done) winner = getGodName(players[1].name);
-    else if(p2Done && !p1Done) winner = getGodName(players[2].name);
-    else{
-      winner = players[1].time < players[2].time
-        ? getGodName(players[1].name)
-        : getGodName(players[2].name);
-    }
-
-    winnerText.innerHTML = `<h1 class="win-text">${winner} Wins 🏆</h1>`;
-    winSound.play();
-    fireworks();
-
-  } else {
+  if(!p1Done && !p2Done){
     winnerText.innerHTML = `
       <div class="score-box">
         It was a great play. Try Again😍
       </div>
     `;
+  }
+
+  else if(p1Done && !p2Done){
+    winnerText.innerHTML = `<h1>${getGodName(players[1].name)} Wins 🏆</h1>`;
+  }
+
+  else if(p2Done && !p1Done){
+    winnerText.innerHTML = `<h1>${getGodName(players[2].name)} Wins 🏆</h1>`;
+  }
+
+  else{
+    let winner =
+      players[1].score > players[2].score
+      ? getGodName(players[1].name)
+      : getGodName(players[2].name);
+
+    winnerText.innerHTML = `<h1>${winner} Wins 🏆</h1>`;
   }
 
   setTimeout(()=>{

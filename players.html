@@ -1,130 +1,140 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Choose Players</title>
+  <meta charset="UTF-8">
+  <title>Players Setup</title>
 
   <style>
     body {
       margin: 0;
-      font-family: Arial;
-      display: flex;
+      padding: 0;
       height: 100vh;
-      background: linear-gradient(to right, #141e30, #243b55);
-      color: white;
+
+      /* 🔥 BACKGROUND IMAGE */
+      background: url("images/player.jpg.jpeg") no-repeat center center/cover;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
     }
 
-    .side {
-      width: 40%;
+    .container {
+      width: 80%;
+      max-width: 900px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 20px;
       padding: 30px;
+      color: white;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .player {
+      width: 40%;
       text-align: center;
     }
 
-    .center {
-      width: 20%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      border-left: 2px solid white;
-      border-right: 2px solid white;
+    .player h2 {
+      margin-bottom: 10px;
     }
 
-    input {
+    input, select {
+      width: 90%;
       padding: 10px;
-      margin: 10px;
-      width: 70%;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: none;
       font-size: 16px;
     }
 
-    .god {
-      padding: 10px 20px;
-      margin: 5px;
-      background: purple;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    .selected {
-      background: gold;
-      color: black;
+    .center {
+      text-align: center;
     }
 
     button {
-      padding: 10px 20px;
       margin-top: 20px;
+      padding: 12px 25px;
       font-size: 18px;
-      background: gold;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
+      background: gold;
       cursor: pointer;
+    }
+
+    button:hover {
+      background: orange;
     }
   </style>
 </head>
 
 <body>
 
-<div class="side">
-  <h2>Player 1</h2>
-  <p>Give your name</p>
-  <input id="p1name">
+  <div class="container">
 
-  <p>Choose your character</p>
-  <div id="p1choice"></div>
-</div>
+    <!-- PLAYER 1 -->
+    <div class="player">
+      <h2>Player 1</h2>
 
-<div class="center">
-  <h3>Choose Gods</h3>
-  <div id="godList"></div>
-  <button onclick="startGame()">Start Game</button>
-</div>
+      <p>Give your name</p>
+      <input type="text" id="p1" placeholder="Enter name">
 
-<div class="side">
-  <h2>Player 2</h2>
-  <p>Give your name</p>
-  <input id="p2name">
+      <p>Choose your character</p>
+      <select id="c1">
+        <option value="Apollo">Apollo</option>
+        <option value="Ares">Ares</option>
+        <option value="Zeus">Zeus</option>
+        <option value="Hera">Hera</option>
+        <option value="Poseidon">Poseidon</option>
+      </select>
+    </div>
 
-  <p>Choose your character</p>
-  <div id="p2choice"></div>
-</div>
+    <!-- CENTER BUTTON -->
+    <div class="center">
+      <button onclick="startGame()">START GAME</button>
+    </div>
 
-<script>
-let gods = ["Zeus","Hera","Poseidon","Athena","Apollo","Artemis","Ares","Aphrodite","Hephaestus","Hermes"];
+    <!-- PLAYER 2 -->
+    <div class="player">
+      <h2>Player 2</h2>
 
-let p1God=null, p2God=null;
+      <p>Give your name</p>
+      <input type="text" id="p2" placeholder="Enter name">
 
-let godList = document.getElementById("godList");
+      <p>Choose your character</p>
+      <select id="c2">
+        <option value="Apollo">Apollo</option>
+        <option value="Ares">Ares</option>
+        <option value="Zeus">Zeus</option>
+        <option value="Hera">Hera</option>
+        <option value="Poseidon">Poseidon</option>
+      </select>
+    </div>
 
-gods.forEach(g=>{
-  let div = document.createElement("div");
-  div.className="god";
-  div.innerText=g;
+  </div>
 
-  div.onclick=()=>{
-    if(!p1God){
-      p1God=g;
-      document.getElementById("p1choice").innerText=g;
-      div.classList.add("selected");
+  <script>
+    function startGame(){
+      let p1 = document.getElementById("p1").value;
+      let p2 = document.getElementById("p2").value;
+      let c1 = document.getElementById("c1").value;
+      let c2 = document.getElementById("c2").value;
+
+      if(!p1 || !p2){
+        alert("Enter both player names!");
+        return;
+      }
+
+      localStorage.setItem("p1", p1);
+      localStorage.setItem("p2", p2);
+      localStorage.setItem("c1", c1);
+      localStorage.setItem("c2", c2);
+
+      window.location.href = "game.html";
     }
-    else if(!p2God){
-      p2God=g;
-      document.getElementById("p2choice").innerText=g;
-      div.classList.add("selected");
-    }
-  };
-
-  godList.appendChild(div);
-});
-
-function startGame(){
-  let name1 = document.getElementById("p1name").value || "Player 1";
-  let name2 = document.getElementById("p2name").value || "Player 2";
-
-  localStorage.setItem("player1God", name1 + " (" + p1God + ")");
-  localStorage.setItem("player2God", name2 + " (" + p2God + ")");
-
-  window.location.href = "game.html";
-}
-</script>
+  </script>
 
 </body>
 </html>

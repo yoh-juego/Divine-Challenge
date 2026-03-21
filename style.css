@@ -3,28 +3,45 @@ body {
   font-family: Arial;
   background: radial-gradient(circle, #0f2027, #203a43, #2c5364);
   color: white;
+  overflow-x: hidden;
 }
 
-/* TOP BAR */
+/* 🔥 FIXED TOP BAR (NO OVERFLOW) */
 .top-bar {
-  display: flex;
-  justify-content: space-between;
-  padding: 15px 25px;
-  font-size: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  padding: 15px;
+  font-size: 16px;
+  background: rgba(0,0,0,0.75);
+  z-index: 1000;
+  text-align: center;
 }
 
+/* ❤️ HEARTS */
 #hearts {
   color: red;
-  font-size: 22px;
+  font-size: 20px;
+  text-align: left;
+}
+
+/* TIMER FIX */
+#timer {
+  text-align: right;
+  padding-right: 10px;
+  font-weight: bold;
 }
 
 /* BOARD */
 .board {
+  margin-top: 100px;
   display: grid;
   grid-template-columns: repeat(4, min(20vw, 120px));
   gap: 15px;
   justify-content: center;
-  margin-top: 30px;
 }
 
 /* CARD */
@@ -32,7 +49,6 @@ body {
   width: min(20vw, 120px);
   height: min(20vw, 120px);
   perspective: 1000px;
-  cursor: pointer;
 }
 
 .inner {
@@ -61,7 +77,6 @@ body {
 
 .back {
   transform: rotateY(180deg);
-  background: white;
 }
 
 .back img {
@@ -70,8 +85,13 @@ body {
   object-fit: contain;
 }
 
+/* ✨ STRONG GOLD EFFECT */
 .matched {
-  box-shadow: 0 0 20px gold;
+  box-shadow:
+    0 0 20px gold,
+    0 0 40px orange,
+    0 0 60px yellow;
+  transform: scale(1.08);
 }
 
 /* POPUP */
@@ -80,14 +100,14 @@ body {
   top: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.9);
+  background: rgba(0,0,0,0.85);
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
 }
 
-/* 🟡 MUSTARD SCOREBOARD */
+/* 🟡 MUSTARD BOX */
 .score-box {
   background: #d4a017;
   color: black;
@@ -95,14 +115,69 @@ body {
   border-radius: 20px;
   font-size: 24px;
   text-align: center;
-  box-shadow: 0 0 25px rgba(0,0,0,0.5);
+  max-width: 80%;
 }
 
+/* BUTTON */
 button {
   padding: 12px 30px;
   font-size: 18px;
   background: gold;
   border: none;
   border-radius: 10px;
-  cursor: pointer;
+  margin-top: 20px;
+}
+
+/* 🌌 ANIMATED BACKGROUND */
+body::before {
+  content: "";
+  position: fixed;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(white 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: moveStars 60s linear infinite;
+  opacity: 0.2;
+  z-index: -1;
+}
+
+@keyframes moveStars {
+  from { transform: translate(0,0); }
+  to { transform: translate(-200px,-200px); }
+}
+
+/* 🎴 CARD HOVER EFFECT */
+.card:hover {
+  transform: scale(1.05);
+  transition: 0.3s;
+  box-shadow: 0 0 15px cyan;
+}
+
+/* 🎉 FIREWORKS */
+.firework {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  background: gold;
+  border-radius: 50%;
+  animation: explode 1s ease-out forwards;
+}
+
+@keyframes explode {
+  from { transform: scale(1); opacity: 1; }
+  to {
+    transform: scale(15);
+    opacity: 0;
+  }
+}
+
+/* 🎊 WIN TEXT ANIMATION */
+.win-text {
+  font-size: 40px;
+  animation: glow 1s infinite alternate;
+}
+
+@keyframes glow {
+  from { text-shadow: 0 0 10px gold; }
+  to { text-shadow: 0 0 25px orange; }
 }

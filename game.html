@@ -4,23 +4,38 @@
   <title>Divine Challenge</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div class="top-bar">
-  <div id="hearts"></div>
-  <div id="turn"></div>
-  <div id="timer"></div>
-</div>
+  <!-- 🔝 TOP BAR -->
+  <div class="top-bar">
+    <div id="hearts"></div>
+    <div id="turn"></div>
+    <div id="level"></div>
+    <div id="timer"></div>
+  </div>
 
-<div id="board" class="board"></div>
+  <!-- 🎮 GAME BOARD -->
+  <div id="board" class="board"></div>
 
-<div id="popup" class="popup">
-  <div id="winnerText"></div>
-  <button onclick="startGame()">START</button>
-</div>
+  <!-- 🟡 POPUP -->
+  <div id="popup" class="popup">
+    <div id="winnerText"></div>
+  <button onclick = "confirmStart()"> START </button>
+  </div>
 
-<!-- 🔥 IMPORTANT: script at END -->
+<!-- 🔊 SOUNDS -->
+<audio id="bgMusic" loop>
+  <source src="https://www.soundjay.com/free-music/sounds/music-1.mp3">
+</audio>
+
+<audio id="flipSound">
+  <source src="https://www.soundjay.com/button/sounds/button-16.mp3">
+</audio>
+
+<audio id="winSound">
+  <source src="https://www.soundjay.com/human/sounds/applause-8.mp3">
+</audio>
+
 <script src="script.js"></script>
 
 </body>
